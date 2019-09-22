@@ -15,6 +15,8 @@ TO-DO:
 
 Fully pre-processed set of digits from 0 to 9: https://www.kaggle.com/valentynsichkar/mnist-preprocessed
 
+37-MB Dataset of pictures of Malayalam actors Mohanlal & Mammooty: https://www.kaggle.com/fillerink/mohanlal-mammooty-images
+
 Stanford Cars Dataset: https://www.kaggle.com/eduardo4jesus/stanford-cars-dataset
 
 Columbia Object Image Library: https://www.kaggle.com/jessicali9530/coil100
