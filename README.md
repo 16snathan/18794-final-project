@@ -8,3 +8,6 @@ TO-DO:
 2-MB Database of Pokemon images & types: https://www.kaggle.com/vishalsubbiah/pokemon-images-and-types
 Fully pre-processed set of digits from 0 to 9: https://www.kaggle.com/valentynsichkar/mnist-preprocessed
 
+Stanford Cars Dataset: https://www.kaggle.com/eduardo4jesus/stanford-cars-dataset
+Columbia Object Image Library: https://www.kaggle.com/jessicali9530/coil100
+Sign Language: https://www.kaggle.com/datamunge/sign-language-mnist
