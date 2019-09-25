@@ -13,13 +13,13 @@ TO-DO:
 
 362-MB Dataset of alphabet from A to J: https://www.kaggle.com/sanikamal/notmnist
 
-Fully pre-processed set of digits from 0 to 9: https://www.kaggle.com/valentynsichkar/mnist-preprocessed
+109-MB Fully pre-processed set of digits from 0 to 9: https://www.kaggle.com/valentynsichkar/mnist-preprocessed
 
 37-MB Dataset of pictures of Malayalam actors Mohanlal & Mammooty: https://www.kaggle.com/fillerink/mohanlal-mammooty-images
 
-Stanford Cars Dataset: https://www.kaggle.com/eduardo4jesus/stanford-cars-dataset
+2-GB Stanford Cars Dataset: https://www.kaggle.com/eduardo4jesus/stanford-cars-dataset
 
-Columbia Object Image Library: https://www.kaggle.com/jessicali9530/coil100
+126-MB Columbia Object Image Library: https://www.kaggle.com/jessicali9530/coil100
 
-Sign Language: https://www.kaggle.com/datamunge/sign-language-mnist
+101-MB Sign Language: https://www.kaggle.com/datamunge/sign-language-mnist
 
