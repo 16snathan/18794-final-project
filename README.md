@@ -23,3 +23,7 @@ TO-DO:
 
 101-MB Sign Language: https://www.kaggle.com/datamunge/sign-language-mnist
 
+FEEDBACK:
+We have a great dataset, but our proposal of what to do with it is too simple. 
+We could either: A) solve a more involved engineering problem (i.e. writing a full-blown phone ASL translator)
+or B) produce a more involved research paper (i.e. minimize the number of FLOating-point-Operations per second for classifying an image with high accuracy)
