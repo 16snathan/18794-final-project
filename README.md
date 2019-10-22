@@ -2,28 +2,12 @@
 Repository for final project of CMU's 18-794: Pattern Recognition Theory
 TO-DO:
   Establish an outline for a project that focuses on "recognizing" objects of some kind through pattern recognition/neural networks/PCA/etc.
-  
-5-GB Database of voice samples: https://www.kaggle.com/zldzmfoq12/korean-voice
-
-1-GB Database of hand gesture recognition: https://www.kaggle.com/gti-upm/leapgestrecog
-
-2-MB Database of Pokemon images & types: https://www.kaggle.com/vishalsubbiah/pokemon-images-and-types
-
-226-MB Database of Rock-Paper-Scissors images: https://www.kaggle.com/sanikamal/rock-paper-scissors-dataset
-
-362-MB Dataset of alphabet from A to J: https://www.kaggle.com/sanikamal/notmnist
-
-109-MB Fully pre-processed set of digits from 0 to 9: https://www.kaggle.com/valentynsichkar/mnist-preprocessed
-
-37-MB Dataset of pictures of Malayalam actors Mohanlal & Mammooty: https://www.kaggle.com/fillerink/mohanlal-mammooty-images
-
-2-GB Stanford Cars Dataset: https://www.kaggle.com/eduardo4jesus/stanford-cars-dataset
-
-126-MB Columbia Object Image Library: https://www.kaggle.com/jessicali9530/coil100
 
 101-MB Sign Language: https://www.kaggle.com/datamunge/sign-language-mnist
 
-FEEDBACK:
-We have a great dataset, but our proposal of what to do with it is too simple. 
-We could either: A) solve a more involved engineering problem (i.e. writing a full-blown phone ASL translator)
-or B) produce a more involved research paper (i.e. minimize the number of FLOating-point-Operations per second for classifying an image with high accuracy)
+\section{Problem Statement}
+American Sign Language is a wholly visual language that is conveyed through hand gestures. Translating this language is a task suited to pattern recognition algorithms and neural networks. However, mobile sign language translator will undoubtedly lack the memory and computational capacity demanded by a desktop-generated neural network. Several techniques exist to shrink these requirements, such as parameter pruning and knowledge distillation, and each has their own advantages and drawbacks. We propose to survey and test a variety of neural network compression techniques[1] in order to evaluate their effectiveness at shrinking a sign language recognition neural network without compromising its accuracy.
+\section{Data}
+The data in this project is a dataset of ASL (American Sign Language) letters[2]. This dataset contains 34,627 examples of letters (27,455 training cases and 7172 test cases) but does not contain the letters J or Z (due to these signs having motion in them). There are 24 classes overall (26 total letters minus the two letters with motion gestures) and each of the classes is represented by the number of the alphabet. Each sample of the dataset is a 28x28 grayscale image, which makes it similar to the MNIST database. The data is organized similarly to the MNIST database as well, with the CSV having the labels and all pixel values in a single row for one picture. The dataset was created by taking 1704 color images of the letters, and applying various filters and cropping methods to produce independent results.
+\section{Method}
+We propose to start by retraining an Inception V3 convolutional neural network on the ASL letter dataset to create a baseline model. Then we will develop three new models: one through performing parameter pruning on the baseline[3][4]; one through performing knowledge distillation on the baseline[5]; one through performing tensor decomposition on the baseline[6]. We propose to rank the speed of the models by measuring the average number of floating-point operations (FLOPS) required by each model to classify one test image.
