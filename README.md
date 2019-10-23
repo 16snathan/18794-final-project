@@ -1,7 +1,7 @@
 # 18794-final-project
 Repository for final project of CMU's 18-794: Pattern Recognition Theory
 TO-DO:
-  Establish an outline for a project that focuses on "recognizing" objects of some kind through pattern recognition/neural networks/PCA/etc.
+  Distill the baseline model and evaluate its effectiveness: https://www.tensorflow.org/hub/tutorials/image_retraining#using_the_retrained_model
 
 101-MB Sign Language: https://www.kaggle.com/datamunge/sign-language-mnist
 
