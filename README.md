@@ -1,7 +1,10 @@
 # 18794-final-project
 Repository for final project of CMU's 18-794: Pattern Recognition Theory
+
 TO-DO:
-  Distill the baseline model and evaluate its effectiveness: https://www.tensorflow.org/hub/tutorials/image_retraining#using_the_retrained_model
+Retrain model in KERAS instead of Tensorflow (since knowledge distillation & weight pruning rely on Keras models)
+  
+  
 
 101-MB Sign Language: https://www.kaggle.com/datamunge/sign-language-mnist
 
