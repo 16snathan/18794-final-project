@@ -1,0 +1,9 @@
+sign_mnist_test.csv & sign_mnist_train.csv are organized into ROWS
+Each row comprises all pixels of one image & its label
+First column is the image's label
+Columns 2-785 are the image's pixel values (from 0 to 255)
+
+Thoughts -- try loading images directly as CSV files and reshaping them
+x_train, x_test: uint8 array of grayscale image data with shape (num_samples, 28, 28).
+y_train, y_test: uint8 array of digit labels (integers in range 0-9) with shape (num_samples).
+(x_train, y_train) is therefore a uint8 array of RGB 

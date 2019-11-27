@@ -1,13 +1,3 @@
-#### NOTES
-#### NEED TO CHANGE DATA BEING LOADED IN
-#### CURRENTLY THIS USES THE MNIST DIGIT DATASET
-#### NEED TO CHANGE:
-#       value of nb_classes
-#       data that (X_train, y_train), (X_test, y_test) refer to
-#       X_train.reshape
-#       Y_train.reshape
-
-from convert_csv_to_numpy_array import load_image_data
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.layers import Activation, Input, Embedding, LSTM, Dense, Lambda, GaussianNoise, concatenate
 from tensorflow.keras.models import Model, load_model
@@ -34,8 +24,8 @@ nb_classes = 10
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
 
 # convert y_train and y_test to categorical binary values 
-Y_train = np_utils.to_categorical(y_train, nb_classes)
-Y_test = np_utils.to_categorical(y_test, nb_classes)
+Y_train = to_categorical(y_train, nb_classes)
+Y_test = to_categorical(y_test, nb_classes)
 
 ################################################################
 ################################################################
@@ -85,6 +75,7 @@ teacher.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
               metrics=['accuracy'])
 
+print("\n\nTEACHER SUMMARY:")
 print(teacher.summary())
 
 ################################################################
@@ -102,6 +93,7 @@ student.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
               metrics=['accuracy'])
 
+print("\n\nSTUDENT SUMMARY:")
 student.summary()
 
 ################################################################
@@ -124,7 +116,7 @@ teacher.fit(X_train, Y_train,
 temp = 7
 
 #Collect the logits from the previous layer output and store it in a different model
-teacher_WO_Softmax = Model(teacher.input, teacher.get_layer('dense_6').output)
+teacher_WO_Softmax = Model(teacher.input, teacher.get_layer('dense_1').output)
 
 ################################################################
 ################################################################
@@ -138,24 +130,24 @@ def softmax(x):
 intermediate_output = teacher_WO_Softmax.predict(X_test[0].reshape(1,28,28,1))
 print(softmax(intermediate_output))
 
-pixels = X_test[0]
+""" pixels = X_test[0]
 pixels = pixels.reshape((28, 28))
 plt.imshow(pixels)
-plt.show()
+plt.show() """
 
 # logits for the first number in test dataset
 x = intermediate_output[0]
-plt.figure(figsize=(20, 10));
+# plt.figure(figsize=(20, 10));
 
 temperature = [1,3,7,10,20,50]
 
-for temp in temperature:
+""" for temp in temperature:
     plt.plot((softmax(x/temp)), label='$T='+str(temp)+'$', linewidth=2);
     plt.legend();
 plt.xlabel('classes ->');
 plt.ylabel('probability');
 plt.xlim([0, 10]);
-plt.show()
+plt.show() """
 
 ################################################################
 ################################################################

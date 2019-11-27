@@ -7,7 +7,8 @@
 #       X_train.reshape
 #       Y_train.reshape
 
-from convert_csv_to_numpy_array import load_image_data
+# from convert_csv_to_numpy_array import load_image_data
+import pickle
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.layers import Activation, Input, Embedding, LSTM, Dense, Lambda, GaussianNoise, concatenate
 from tensorflow.keras.models import Model, load_model
@@ -27,21 +28,24 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 import matplotlib.pyplot as plt
 
-# LOAD CLASSES
+################################################################
+################################################################ 
+# LOAD DATA
 nb_classes = 25
-
-(X_train, y_train), (X_test, y_test) = load_image_data()
-
-train_size = 27455
-test_size = 7172
+with open('sign_mnist_numpy_arrays.pickle', 'rb') as f:
+    ((X_train, y_train), (X_test, y_test)) = pickle.load(f)
+print("Loaded image data!")
 # convert y_train and y_test to categorical binary values 
 Y_train = to_categorical(y_train, nb_classes)
 Y_test = to_categorical(y_test, nb_classes)
 
-
-# Reshape them to batch_size, width,height,#channels
-X_train = X_train.reshape(train_size, 28, 28, 1)
-X_test = X_test.reshape(test_size, 28, 28, 1)
+################################################################
+################################################################
+# PREPROCESS DATA
+# Reshape them to batch_size, width,height, #channels
+X_train = X_train.reshape(27455, 28, 28, 1)
+X_test = X_test.reshape(7172, 28, 28, 1)
+print("Image data reshaped to batch size!")
 
 X_train = X_train.astype('float32')
 X_test = X_test.astype('float32')
@@ -53,34 +57,70 @@ X_test /= 255
 print(X_train.shape[0], 'train samples')
 print(X_test.shape[0], 'test samples')
 
-# 
-# Define Teacher model
-epochs = 12
+################################################################
+################################################################
+# DEFINE TEACHER MODEL
+
 input_shape = (28, 28, 1) # Input shape of each image
+
 # Hyperparameters
 nb_filters = 64 # number of convolutional filters to use
 pool_size = (2, 2) # size of pooling area for max pooling
 kernel_size = (3, 3) # convolution kernel size
+
 teacher = load_model('baseline_keras_inception_v3.h5')
 
+print("SUMMARY OF BASELINE INCEPTION MODEL:")
 print(teacher.summary())
 
+################################################################
+################################################################
+# DEFINE STUDENT MODEL
+student = Sequential()
+student.add(Flatten(input_shape=input_shape))
+student.add(Dense(32, activation='relu'))
+student.add(Dropout(0.2))
+student.add(Dense(nb_classes))
+student.add(Activation('softmax'))
+
+#sgd = keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+student.compile(loss='categorical_crossentropy',
+              optimizer='adadelta',
+              metrics=['accuracy'])
+
+student.summary()
+
+################################################################
+################################################################
 # Define a new model that outputs only teacher logits
 # Raise the temperature of teacher model and gather the soft targets
-
 # Set a tempature value
 temp = 7
 
 #Collect the logits from the previous layer output and store it in a different model
-teacher_WO_Softmax = Model(teacher.input, teacher.get_layer('dense_6').output)
+teacher_WO_Softmax = Model(teacher.input, teacher.get_layer('dense').output)
 
+################################################################
+################################################################
 # Define a manual softmax function
 def softmax(x):
     return np.exp(x)/(np.exp(x).sum())
 
-# Prepare soft-targets and target data on which to train student
+################################################################
+################################################################
+# For example, just grab the first image and lets see how softening of probabilities work
+intermediate_output = teacher_WO_Softmax.predict(X_test[0].reshape(1,28,28,1))
+print(softmax(intermediate_output))
+
+# logits for the first number in test dataset
+x = intermediate_output[0]
+
+################################################################
+################################################################
+# Prepare the soft targets and the target data for student to be trained upon
 teacher_train_logits = teacher_WO_Softmax.predict(X_train)
-teacher_test_logits = teacher_WO_Softmax.predict(X_test) # This model directly gives the logits ( see the teacher_WO_softmax model above)
+# This model directly gives the logits (see the teacher_WO_softmax model above)
+teacher_test_logits = teacher_WO_Softmax.predict(X_test) 
 
 # Perform a manual softmax at raised temperature
 train_logits_T = teacher_train_logits/temp
@@ -93,13 +133,16 @@ Y_test_soft = softmax(test_logits_T)
 Y_train_new = np.concatenate([Y_train, Y_train_soft], axis=1)
 Y_test_new =  np.concatenate([Y_test, Y_test_soft], axis =1)
 
-
+################################################################
+################################################################
 # Prepare the student model that outputs probabilities with and without temperature
+
 # Remove the softmax layer from the student network
 student.layers.pop()
 
 # Now collect the logits from the last layer
-logits = student.layers[-1].output # This is going to be a tensor. And hence it needs to pass through a Activation layer
+# This is going to be a tensor. And hence it needs to pass through a Activation layer
+logits = student.layers[-1].output 
 probs = Activation('softmax')(logits)
 
 # softed probabilities at raised temperature
@@ -113,9 +156,14 @@ student = Model(student.input, output)
 
 student.summary()
 
-# Declare knowledge distillation loss function
+################################################################
+################################################################
 # This will be a teacher trained student model. 
 # --> This uses a knowledge distillation loss function
+
+epochs = 12
+
+# Declare knowledge distillation loss
 def knowledge_distillation_loss(y_true, y_pred, alpha):
 
     # Extract the one-hot encoded values and the softs separately so that we can create two objective functions
@@ -147,7 +195,6 @@ student.fit(X_train, Y_train_new,
           verbose=1,
           validation_data=(X_test, Y_test_new))
 
-# Create standalone student model not trained by teacher
 # This is a standalone student model (same number of layers as original student model) trained on same data
 # for comparing it with teacher trained student.
 
@@ -158,7 +205,7 @@ n_student.add(Dropout(0.2))
 n_student.add(Dense(nb_classes))
 n_student.add(Activation('softmax'))
 
-#sgd = tensorflow.keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+#sgd = keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 n_student.compile(loss='categorical_crossentropy',
               optimizer='adadelta',
               metrics=['accuracy'])

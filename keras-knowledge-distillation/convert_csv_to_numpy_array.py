@@ -1,9 +1,10 @@
 import numpy as np
+import pickle
 from numpy import loadtxt
 from numpy import reshape
 import os
 
-def load_image_data():
+def save_image_data():
     train_file_path = "sign_mnist_train.csv"
     test_file_path = "sign_mnist_test.csv"
     # x_train is a uint8 array of grayscale image data with shape (num_samples, 28, 28).
@@ -51,7 +52,7 @@ def load_image_data():
     return (x_train, y_train), (x_test, y_test)
     
 def main():
-    (x_train, y_train), (x_test, y_test) = load_image_data()
+    (x_train, y_train), (x_test, y_test) = save_image_data()
     print("x_train.shape = ", x_train.shape)
     print("y_train.shape = ", y_train.shape)
 
@@ -63,3 +64,8 @@ def main():
 
     print("x_test[0] = ",x_test[0])
     print("y_test[0] = ", y_test[0])
+    data = ((x_train, y_train), (x_test, y_test))
+    with open('sign_mnist_numpy_arrays.pickle','wb') as f:
+        pickle.dump(data,f)
+
+main()
