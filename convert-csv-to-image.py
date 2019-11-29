@@ -7,13 +7,13 @@ def chunks(l, n):
 
 def main():
     # load mnist dataset, skipping over header row
-    parentFolder = "testing_images"
-    sheet = loadtxt('sign_mnist_test.csv',dtype=int,delimiter=',',skiprows=1)
+    valFolder = "validation_images"
+    trainFolder = "training_images"
+    numTrain = 0
+    numVal = 0
+    sheet = loadtxt('sign_mnist_train.csv',dtype=int,delimiter=',',skiprows=1)
     # convert dataset to list
     data = sheet.tolist()
-    # print("len(data): ",len(data))
-    # print("data[0]:",data[0])
-    # print("len(data[0])",len(data[0]))
     rowNum = 1
     w = png.Writer(width=28,height=28,greyscale=True)
     for row in data:
@@ -22,8 +22,15 @@ def main():
         # get image data and convert it into 2d array of 28x28
         pixels = row[1:]
         image = chunks(pixels,28)
-        # if folder DNE, create it
-        folderPath = parentFolder + "/" + chr(folder+65)
+        # Use every 4th image for validation instead of training
+        if (rowNum % 4 == 0):
+            useFolder = valFolder
+            numVal += 1
+        else:
+            useFolder = trainFolder
+            numTrain += 1
+        # Create folder and path to folder
+        folderPath = useFolder + "/" + chr(folder+65)
         if not os.path.isdir(folderPath):
             os.mkdir(folderPath)
         # create image in folder
@@ -34,4 +41,7 @@ def main():
         w.write(f,image)
         f.close()
         rowNum = rowNum + 1
+
+    print("Total number of training images: ", numTrain)
+    print("Total number of validation images: ", numVal)
 main()

@@ -1,8 +1,10 @@
 import numpy as np
 from math import ceil
 import pickle
+import png
 from numpy import loadtxt
 from numpy import reshape
+from PIL import Image
 import os
 
 def save_image_data():
@@ -13,12 +15,15 @@ def save_image_data():
     num_train = 20592
     num_val = 6863
     num_test = 7172
-    imHeight = 28
-    imWidth = 28
-    imDimensions = (imHeight,imWidth)
-    trainDimensions = (num_train,imHeight,imWidth)
-    valDimensions = (num_val,imHeight,imWidth)
-    testDimensions = (num_test,imHeight,imWidth)
+    height = 28
+    width = 28
+    imDimensions = (height,width)
+    scaledHeight = 84
+    scaledWidth = 84
+    scaledDimensions = (scaledHeight,scaledWidth)
+    trainDimensions = (num_train,scaledHeight,scaledWidth)
+    valDimensions = (num_val,scaledHeight,scaledWidth)
+    testDimensions = (num_test,scaledHeight,scaledWidth)
     # Initialize the output arrays
     x_train = np.empty(trainDimensions,dtype='uint8')
     y_train = np.empty((num_train,),dtype='uint8')
@@ -33,17 +38,22 @@ def save_image_data():
     row = 1
     # process each training image in data
     for pic in data:
-        pixels = pic[1:]
+        # convert CSV to image and resize
+        pixels = np.array(pic[1:])
+        pixels = np.reshape(pixels,imDimensions)
+        Pixels = Image.fromarray(pixels.astype(np.uint8))
+        scaledPixels = Pixels.resize(scaledDimensions)
+        pixels = np.asarray(scaledPixels)
         # put every 4th label into y_val
-        # reshape image data into 28x28 and store every 4th image in x_val
+        # reshape image data into 84x84 and store every 4th image in x_val
         if (row % 4 == 0):
             index = int(row/4 - 1)
             y_val[index] = pic[0]
-            x_val[index] = np.reshape(pixels,imDimensions)
+            x_val[index] = np.reshape(pixels,scaledDimensions)
         else:
             index = int(row - ceil(row/4))
             y_train[index] = pic[0]
-            x_train[index] = np.reshape(pixels,imDimensions)
+            x_train[index] = np.reshape(pixels,scaledDimensions)
 
         row += 1
     
@@ -53,11 +63,15 @@ def save_image_data():
     row = 0
     # process each image in data
     for pic in data:
+        pixels = np.array(pic[1:])
+        pixels = np.reshape(pixels,imDimensions)
+        Pixels = Image.fromarray(pixels.astype(np.uint8))
+        scaledPixels = Pixels.resize(scaledDimensions)
+        pixels = np.asarray(scaledPixels)
         # put picture label into y_test
         y_test[row] = pic[0]
         # reshape image data into 28x28 and store in x_test
-        pixels = pic[1:]
-        x_test[row] = np.reshape(pixels,imDimensions)
+        x_test[row] = np.reshape(pixels,scaledDimensions)
         row += 1
 
     return (x_train, y_train), (x_val, y_val), (x_test, y_test)
@@ -82,7 +96,7 @@ def main():
     print("x_val[0] = ",x_val[0])
     print("y_val[0] = ", y_val[0])
     data = ((x_train, y_train), (x_val, y_val), (x_test, y_test))
-    with open('sign_mnist_numpy_data.pickle','wb') as f:
+    with open('sign_mnist_numpy_scaled_data.pickle','wb') as f:
         pickle.dump(data,f)
 
 main()
