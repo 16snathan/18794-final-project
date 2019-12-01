@@ -35,18 +35,18 @@ def main():
     # Compile model using an RMSProp optimizer
     #   with the default learning rate of 0.001,
     #   and a categorical_crossentropy — used in multiclass classification tasks — as loss function.
-    model.compile(optimizer='rmsprop',
+    model.compile(optimizer='adam',
                 loss='categorical_crossentropy',
                 metrics=['accuracy'])
 
     # Rescale data to 84x84, as InceptionV3 requires image sizes at least 75x75
     SCALED_WIDTH = 84
     SCALED_HEIGHT = 84
-    BATCH_SIZE = 128
+    BATCH_SIZE = 64
 
-    train_datagen = ImageDataGenerator()
-    validation_datagen = ImageDataGenerator()
-    test_datagen = ImageDataGenerator()
+    train_datagen = ImageDataGenerator(rescale=1./255)
+    validation_datagen = ImageDataGenerator(rescale=1./255)
+    test_datagen = ImageDataGenerator(rescale=1./255)
 
     # Use image generators to rescale images into batches
     train_generator = train_datagen.flow_from_directory(
@@ -68,7 +68,7 @@ def main():
         class_mode='categorical')
 
     # perform transfer learning on model
-    EPOCHS = 5
+    EPOCHS = 8
     STEPS_PER_EPOCH = math.ceil(NUM_TRAIN/BATCH_SIZE)
     VALIDATION_STEPS = math.floor(NUM_VAL/BATCH_SIZE)
     history = model.fit_generator(
