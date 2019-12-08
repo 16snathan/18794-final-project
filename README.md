@@ -3,9 +3,7 @@ Repository for final project of CMU's 18-794: Pattern Recognition Theory
 
 TO-DO:
 Add new evaluation metric: # of parameters of model (# of layers and neurons)
-
 Train an SVM
-
 Remake baseline model -- it should not be inception. Try AlexNet or see what model was used on the original Kaggle dataset or just build a small baseline model with two fully-connected layers & one convolution layer.
   
   
