@@ -6,6 +6,9 @@ Add new evaluation metric: # of parameters of model (# of layers and neurons).
 
 Train and evaluate an SVM.
 
+Try to improve new distilled model -- accuracy is bafflingly low
+
+DONE:
 Remake baseline model -- it should not be inception. Try AlexNet or see what model was used on the original Kaggle dataset or just build a small baseline model with two fully-connected layers & one convolution layer.
   
   
